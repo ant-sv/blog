@@ -1,0 +1,18 @@
+<div class="well">
+    <div class="media">
+        
+        <img class="media-object pull-left" src=""><!-- sm_image -->
+        
+        <div class="media-body blog-media-body">
+            <h4 class="media-heading col-xs-10"><!-- title --></h4>
+            
+            <p class="text-right"><span><i class="glyphicon glyphicon-calendar"></i> <!-- date --> </span></p>
+            <p class="text-justify"><!-- content --></p>
+            <p class="pull-right">
+                <a href="" class="btn btn-info btn-sm blog-link">Read</a><!-- id -->
+                <a href="" class="btn btn-default btn-sm blog-link">Edit</a><!-- id -->
+            </p>
+        </div>
+        
+    </div>
+</div>
