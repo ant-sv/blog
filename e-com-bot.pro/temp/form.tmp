@@ -13,10 +13,10 @@
         </div>
         <div class="form-group clearfix">
             <div class="pull-left">
-                <label for="FormControlFile1">Image</label>
-                <input type="file" class="form-control-file" id="FormControlFile1">
+                <label for="file">Image</label>
+                <input type="file" class="form-control-file" id="file">
             </div>
-            <a href="" class="btn btn-warning btn-sm pull-right">Submit</a><!-- id -->
+            <a href="" class="btn btn-warning pull-right">Submit</a><!-- id -->
         </div>
     </form>
 </div>

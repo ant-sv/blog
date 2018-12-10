@@ -13,7 +13,7 @@ function BlogReady() {
         temps: {}
     };
 
-    let cache, page, config, route;
+    let config;
 
     BindHandlers();
 
@@ -105,13 +105,13 @@ function BlogReady() {
 
             var temp = document.createRange().createContextualFragment(ui.temps['/form']);
 
-            var inputs = temp.querySelectorAll('INPUT');
-            inputs[0].value = post.title;
+            temp.querySelector('INPUT').value = post.title;
             temp.querySelector('TEXTAREA').innerHTML = post.content;
             temp.querySelector('IMG').src = post.sm_image;
 
             temp.querySelector('A').addEventListener('click', UpdatePost);
-            temp.querySelector('A').href = '/update?' + post.id;
+            // temp.querySelector('A').href = '/update?' + post.id;
+            temp.querySelector('FORM').id = post.id;
 
             fragment.appendChild(temp);
         });
@@ -121,10 +121,25 @@ function BlogReady() {
 
     function UpdatePost(e) {
 
+        if (e.target.tagName !== 'A') return;
+
         e.stopPropagation();
         e.preventDefault();
 
-        log('send data');
+        var formData = new FormData();
+
+        formData.append('title', ui.container.querySelectorAll('INPUT')[0].value);
+        formData.append('content', ui.container.querySelector('TEXTAREA').value);
+        formData.append('id', ui.container.querySelector('FORM').id);
+        formData.append('title', ui.container.querySelectorAll('INPUT')[0].value);
+        formData.append('image', ui.container.querySelector('#file').files[0]);
+
+        $.post({
+            url: config.router + '/update',
+            data: formData,
+            processData: false,
+            contentType: false,
+        }).then(data => log(data));
     }
 
     function RenderPost(json) {
@@ -168,8 +183,6 @@ function BlogReady() {
 
         var obj = config.pages.find(o => o.path === location.pathname) || config.pages.find(o => o.path === '/error');
 
-        log(obj);
-
         // var url = obj.temp;
         // var temp = ui.temps[url] || ui.temps['/error'];
         // ui.container.insertAdjacentHTML('afterbegin', temp);
@@ -183,10 +196,10 @@ function BlogReady() {
 
     function GetState(e) {
 
+        if (e.target.tagName !== 'A') return;
+
         e.stopPropagation();
         e.preventDefault();
-
-        if (e.target.tagName !== 'A') return;
 
         var state = { page: e.target.getAttribute('href') };
         history.pushState(state, '', state.page);

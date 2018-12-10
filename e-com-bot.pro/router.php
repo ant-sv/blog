@@ -171,6 +171,17 @@
 
 		$dbo = myDB::connect();
 
+		$data = '';
+
+		foreach ( $_POST as $key=>$value ) $data .= "\$_POST[\"$key\"] = $value\n";
+		foreach ( $_FILES as $key=>$value ) $data .= "\$_FILES[\"$key\"] = $value\n";
+		foreach ( $_FILES["image"] as $key=>$value ) $data .= "\$_FILES[\"image\"][\"$key\"] = $value\n";
+
+		// $_FILES['file'];
+
+		echo $data;
+		exit();
+
 		/*
 
 		$title = "";
