@@ -4,17 +4,11 @@ function BlogReady() {
 
     const d = document;
     const w = window;
-
     const log = console.log.bind(console);
-
-    let ui = {
-
-        container: null,
-        temps: {}
-    };
-
     let config;
 
+    let ui = { container: null, temps: {} };
+    
     BindHandlers();
 
     function Init(state) {
@@ -26,7 +20,7 @@ function BlogReady() {
             mainPage: '/blog',
             pages: [
                 {
-                    title: 'Main',
+                    title: 'Main page',
                     path: '/',
                     temp: '/blog',
                     route: '/blog',
@@ -34,7 +28,7 @@ function BlogReady() {
                     data: 'all'
                 },
                 {
-                    title: 'Edit',
+                    title: 'Edit post',
                     path: '/edit',
                     temp: '/form',
                     route: '/edit',
@@ -53,57 +47,50 @@ function BlogReady() {
                     title: 'Error',
                     path: '/error',
                     temp: '/error',
-                    route: null,
+                    route: '/error',
                     handler: RenderError,
-                    data: null
+                    data: 'Page not found'
                 }
             ]
         };
 
         const promises = config.pages.map(item => item.temp);
-
-        cache = {}, page = {};
-
         ui.container = d.getElementById('blogContent');
         Promise.all(promises.map(url => GetTemp(url))).then(() => Render(state));
+
+        // log(ui.temps);
     }
 
     function GetTemp(url) {
 
-        return fetch(`temp${url}.tmp`)
+        return fetch(`/temp${url}.tmp`)
             .then(response => { return response.text().then(text => ui.temps[url] = text) });
     }
 
     function RenderBlog(json) {
         
-        var fragment = document.createElement('DIV');
-
         JSON.parse(json).forEach(post => {
 
-            var temp = document.createRange().createContextualFragment(ui.temps['/blog']);
+            var temp = d.createRange().createContextualFragment(ui.temps['/blog']);
+
+            d.title = config.pages.find(o => o.path === '/').title;
 
             temp.querySelector('H4').innerHTML = post.title;
             temp.querySelector('IMG').src = post.sm_image;
             var span = temp.querySelector('SPAN');
             span.parentNode.insertBefore(document.createTextNode(post.created), span.nextSibling);
             temp.querySelectorAll('P')[1].innerHTML = post.content.substring(0, 500) + '...';
-            var links = temp.querySelectorAll('A');
-            links[0].href = '/post?' + post.id;
-            links[1].href = '/edit?' + post.id;   
+            temp.querySelector('A').href = '/post?' + post.id;
 
-            fragment.appendChild(temp);
+            ui.container.appendChild(temp);
         });
-
-        ui.container.appendChild(fragment);
     }
 
     function RenderEdit(json) {
 
-        var fragment = document.createElement('DIV');
-
         JSON.parse(json).forEach(post => {
 
-            var temp = document.createRange().createContextualFragment(ui.temps['/form']);
+            var temp = d.createRange().createContextualFragment(ui.temps['/form']);
 
             temp.querySelector('INPUT').value = post.title;
             temp.querySelector('TEXTAREA').innerHTML = post.content;
@@ -113,10 +100,8 @@ function BlogReady() {
             // temp.querySelector('A').href = '/update?' + post.id;
             temp.querySelector('FORM').id = post.id;
 
-            fragment.appendChild(temp);
+            ui.container.appendChild(temp);
         });
-
-        ui.container.appendChild(fragment);
     }
 
     function UpdatePost(e) {
@@ -128,11 +113,11 @@ function BlogReady() {
 
         var formData = new FormData();
 
-        formData.append('title', ui.container.querySelectorAll('INPUT')[0].value);
-        formData.append('content', ui.container.querySelector('TEXTAREA').value);
-        formData.append('id', ui.container.querySelector('FORM').id);
-        formData.append('title', ui.container.querySelectorAll('INPUT')[0].value);
-        formData.append('image', ui.container.querySelector('#file').files[0]);
+        formData.append('title',   ui.container.querySelectorAll('INPUT')[0].value);
+        formData.append('content', ui.container.querySelector   ('TEXTAREA').value);
+        formData.append('id',      ui.container.querySelector   ('FORM').id);
+        formData.append('title',   ui.container.querySelectorAll('INPUT')[0].value);
+        formData.append('image',   ui.container.querySelector   ('#file').files[0]);
 
         $.post({
             url: config.router + '/update',
@@ -144,11 +129,9 @@ function BlogReady() {
 
     function RenderPost(json) {
 
-        var fragment = document.createElement('DIV');
-
         JSON.parse(json).forEach(post => {
 
-            var temp = document.createRange().createContextualFragment(ui.temps['/post']);
+            var temp = d.createRange().createContextualFragment(ui.temps['/post']);
 
             var headers = temp.querySelectorAll('H2');
             headers[0].innerHTML = post.title;
@@ -161,18 +144,20 @@ function BlogReady() {
             links[0].href = '/del?' + post.id;
             links[1].href = '/edit?' + post.id;
 
-            fragment.appendChild(temp);
+            ui.container.appendChild(temp);
         });
-
-        ui.container.appendChild(fragment);
     }
 
-    function RenderError() {
+    function RenderError(data) {
 
-        var fragment = document.createElement('DIV');
-        var temp = document.createRange().createContextualFragment(ui.temps['/error']);
-        fragment.appendChild(temp);
-        ui.container.appendChild(fragment);
+        d.title = `${config.pages.find(o => o.path === '/error').title} - ${data}`;
+
+        var temp = d.createRange().createContextualFragment(ui.temps['/error']);
+        temp.querySelector('DIV').innerHTML = data;
+
+        // log(location.pathname);
+
+        ui.container.appendChild(temp);
     }
 
     function Render(state) {
@@ -180,8 +165,9 @@ function BlogReady() {
         if (!state) return;
         
         ClearContent();
-
         var obj = config.pages.find(o => o.path === location.pathname) || config.pages.find(o => o.path === '/error');
+
+        // log(obj);
 
         // var url = obj.temp;
         // var temp = ui.temps[url] || ui.temps['/error'];
@@ -190,8 +176,9 @@ function BlogReady() {
 
         var data = 'data=' + (location.search.substr(1) || obj.data);
 
-        $.post({ url: config.router + obj.route, data: data})
-            .done(obj.handler);
+        obj.path === '/error' ?
+            obj.handler(obj.data) :
+            $.post({ url: config.router + obj.route, data: data}).done(obj.handler);
     }
 
     function GetState(e) {
@@ -209,9 +196,8 @@ function BlogReady() {
 
     function ClearContent(){
         
-        while (ui.container.firstChild) {
+        while (ui.container.firstChild)
             ui.container.removeChild(ui.container.firstChild);
-        }
     }
 
     function BindHandlers() {

@@ -1,42 +1,10 @@
 <?php
 
-    // $request_method = $_SERVER["REQUEST_METHOD"];
+	if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
-	/*
-	foreach ( $_SERVER as $key=>$value ) {
-	   print "\$_SERVER[\"$key\"] == $value<br/>";
-	}
-
-		echo $_SERVER["REDIRECT_URL"];
-		echo nl2br ("\n");
-		echo $_SERVER["REDIRECT_QUERY_STRING"];
-		echo nl2br ("\n");
-	*/
-
-	if ($_SERVER["REQUEST_METHOD"] === "GET") {
-
-         header("Location: /");
+         header('Location: /');
          exit();
 	}
-
-    /*
-    function __autoload ( $class_name ) {
-
-		$path = str_replace( "_", "/", $class_name );
-
-		if ( file_exists( $path.".php" )) {
-
-			include_once( $path.".php" );
-
-		} else {
-
-			header( 'HTTP/1.0 404 Not Found' );
-			echo 'Cтраницы не существует';
-			exit();
-
-		}
-	}
-	*/
 
 	class myPDO extends PDO {
 
@@ -54,7 +22,7 @@
 
 		const DB_HOST = 'localhost';
 		const DB_USER = 'ant-sv';
-		const DB_PASS = '******';
+		const DB_PASS = '********';
 		const DB_NAME = 'ant-sv_blog';
 		const DB_TYPE = 'mysql';
 
@@ -81,16 +49,13 @@
 				}
 				catch (PDOException $e) {
 
-					echo 'ошибка подключения к базе данных';
-					// file_put_contents( 'logs/PDOErrors.txt', $e->getMessage(), FILE_APPEND );
+					echo $e->getMessage();
 				}
 			}
 
 			return self::$_instance;
 		}
 	}
-
-    // include("../connection.php");
 
 	switch ($_SERVER["PATH_INFO"]) {
 
@@ -144,10 +109,6 @@
             'SELECT * FROM blog WHERE deleted = 0 ORDER BY created DESC LIMIT 1' :
             'SELECT * FROM blog WHERE id = ? AND deleted = 0';
 
-		// if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            // foreach ($row as $key => $value) echo $key . ": " . $value . "<br>";
-		// }
-
 		$data = '';
 
 		try {
@@ -163,8 +124,6 @@
         }
 
         exit();
-
-		// echo 'ничего не обнаружено ' . __CLASS__;
 	}
 
 	function SetPost() {
@@ -177,15 +136,12 @@
 		foreach ( $_FILES as $key=>$value ) $data .= "\$_FILES[\"$key\"] = $value\n";
 		foreach ( $_FILES["image"] as $key=>$value ) $data .= "\$_FILES[\"image\"][\"$key\"] = $value\n";
 
-		// $_FILES['file'];
-
 		echo $data;
 		exit();
 
-		/*
-
-		$title = "";
-		$content = "";
+/*
+		$title = '';
+		$content = '';
 
         $sql = "INSERT INTO blog (title, content, created, sm_image, image)
                 VALUES
@@ -219,5 +175,4 @@
         }
 */    
 	}
-
 ?>

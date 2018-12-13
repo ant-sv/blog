@@ -10,7 +10,6 @@
             <p class="text-justify"><!-- content --></p>
             <p class="pull-right">
                 <a href="" class="btn btn-info btn-sm blog-link">Read</a><!-- id -->
-                <a href="" class="btn btn-default btn-sm blog-link">Edit</a><!-- id -->
             </p>
         </div>
         
