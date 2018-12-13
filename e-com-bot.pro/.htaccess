@@ -1,0 +1,45 @@
+<IfModule mod_rewrite.c>
+
+RewriteEngine On
+RewriteBase /
+RewriteRule ^index\.html$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.html [L]
+
+</IfModule>
+
+# RewriteCond %{HTTP_REFERER} !=https://e-com-bot.pro/index.html [NC]
+# RewriteRule ^temp/(.*)\.tmp$ - [F,L]
+# RewriteCond %{HTTP:X-AJAX} !yes
+# RewriteRule ^temp/(.*)\.tmp$ - [F]
+
+ErrorDocument 403 /index.html
+ErrorDocument 404 /index.html
+
+# RewriteRule .* - [F,E=SPECIAL_ERROR:1]
+
+# RewriteEngine on
+# RewriteCond %{REQUEST_FILENAME} !-f
+# RewriteCond %{REQUEST_FILENAME} !-d
+# RewriteRule ^.*$ /index.html [L,QSA]
+
+# RewriteEngine On
+# Options +SymLinksIfOwnerMatch
+# RewriteCond %{REQUEST_FILENAME} !-d
+# RewriteCond %{REQUEST_FILENAME} !-f
+# RewriteCond %{REQUEST_FILENAME} !-l
+# RewriteRule ^(.+)$ index.html [L,QSA]
+
+# old
+# RewriteEngine on
+
+# RewriteCond %{HTTP_REFERER} !^$
+# RewriteCond %{HTTP_REFERER} !website.com [NC]
+# RewriteRule \.(gif|jpe?g|png|bmp)$ hl.jpg [L]
+
+# RewriteCond %{REQUEST_FILENAME} !-f
+# RewriteCond %{REQUEST_FILENAME} !-d
+# RewriteRule ^(.*)$ index.php?route=$1 [L,QSA]
+
+# AddDefaultCharset UTF-8
