@@ -1,0 +1,12 @@
+# Options -Indexes
+
+# <FilesMatch "\.(tmp)$">
+
+# Order allow,deny
+# Deny from all
+
+# </FilesMatch>
+
+# Order Deny,Allow
+# Deny from all
+# Allow from 127.0.0.1
